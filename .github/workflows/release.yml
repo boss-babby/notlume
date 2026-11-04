@@ -1,0 +1,43 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install cargo-packager
+        run: cargo install cargo-packager --locked
+      - name: Build + package (MSI via WiX, EXE via NSIS)
+        run: ./scripts/package-windows.ps1
+      - name: Sign (optional, needs secrets)
+        if: ${{ env.WINDOWS_CERT_BASE64 != '' }}
+        env:
+          WINDOWS_CERT_BASE64: ${{ secrets.WINDOWS_CERT_BASE64 }}
+          WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+        run: ./scripts/sign-windows.ps1
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.msi
+            dist/*-setup.exe
+            dist/*.zip
+            dist/SHA256SUMS.txt
+
+  linux-macos:
+    strategy:
+      matrix: { os: [ubuntu-latest, macos-latest] }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libx11-dev
+        if: runner.os == 'Linux'
+      - run: cargo build -p app-native --release
