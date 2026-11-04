@@ -1,0 +1,23 @@
+[package]
+name = "nw-ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "egui widgets, theme, animation and the editor shared by the native and web apps."
+
+[features]
+# Embed Inter + an emoji font from crates/ui/assets/fonts (run scripts/fetch-fonts.sh first).
+bundled-fonts = []
+
+[dependencies]
+nw-core = { path = "../core" }
+nw-api-types = { path = "../api-types" }
+egui = { workspace = true }
+eframe = { workspace = true }
+egui_extras = { workspace = true }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+ehttp = "0.5"
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+log = { workspace = true }

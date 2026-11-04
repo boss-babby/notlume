@@ -1,0 +1,29 @@
+[package]
+name = "app-web"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "WebAssembly entry point (built with trunk)."
+
+[[bin]]
+name = "app-web"
+path = "src/main.rs"
+
+[dependencies]
+log = { workspace = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+nw-core = { path = "../core" }
+nw-ui = { path = "../ui" }
+egui = { workspace = true }
+# glow (WebGL2) on the web: smaller bundle and wider browser support than wgpu.
+eframe = { workspace = true, features = ["glow"] }
+serde_json = { workspace = true }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = [
+    "Window", "Document", "Element", "HtmlElement", "HtmlCanvasElement", "HtmlInputElement",
+    "HtmlAnchorElement", "Storage", "File", "FileList", "FileReader", "Blob", "BlobPropertyBag",
+    "Url", "Location", "MediaQueryList", "Event",
+] }

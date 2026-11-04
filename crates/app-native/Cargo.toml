@@ -1,0 +1,32 @@
+[package]
+name = "app-native"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Native desktop entry point (Windows first; Linux/macOS compile-ready)."
+
+[[bin]]
+name = "notes"
+path = "src/main.rs"
+
+[dependencies]
+nw-core = { path = "../core" }
+nw-ui = { path = "../ui" }
+egui = { workspace = true }
+eframe = { workspace = true, features = ["wgpu"] }
+serde_json = { workspace = true }
+log = { workspace = true }
+env_logger = "0.11"
+rusqlite = { version = "0.32", features = ["bundled"] }
+rfd = "0.15"
+dirs = "5"
+
+[package.metadata.packager]
+product-name = "Notes"
+identifier = "app.notes.desktop"
+description = "Notion-style workspace written in Rust"
+formats = ["wix", "nsis"]
+out-dir = "../../dist"
+before-packaging-command = "cargo build -p app-native --release"
+binaries = [{ path = "notes", main = true }]
+resources = []

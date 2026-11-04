@@ -1,0 +1,11 @@
+[build]
+target = "index.html"
+dist = "dist"
+# The website serves the build at /app/
+public_url = "/app/"
+
+[serve]
+port = 8080
+# Proxy API calls to the axum server during development so cookies are same-origin.
+[[proxy]]
+backend = "http://localhost:8000/api/"

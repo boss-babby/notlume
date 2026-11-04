@@ -1,0 +1,49 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/api-types",
+    "crates/ui",
+    "crates/app-native",
+    "crates/app-web",
+    "crates/server",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+rust-version = "1.80"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde", "js"] }
+log = "0.4"
+
+# egui is pinned to 0.31.x on purpose: the code in crates/ui was written
+# against that API. See docs/adr/0001-architecture.md for the upgrade path.
+egui = "=0.31.1"
+eframe = { version = "=0.31.1", default-features = false, features = [
+    "default_fonts",
+    "accesskit",
+    "persistence",
+    "wayland",
+    "x11",
+] }
+egui_extras = { version = "=0.31.1", features = ["all_loaders"] }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# Size-optimised profile used for the WebAssembly build (trunk --release uses it via Trunk.toml).
+[profile.wasm-release]
+inherits = "release"
+opt-level = "s"
+
+[profile.dev.package."*"]
+opt-level = 2
